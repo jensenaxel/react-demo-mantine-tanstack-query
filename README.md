@@ -3,6 +3,9 @@ React Boilerplate
 
 ![Build](https://github.com/chuntley/react-boilerplate/workflows/Build/badge.svg)
 
+Hosted at:
+https://celadon-puppy-b8d5ca.netlify.app
+
 Installation
 ---
 
@@ -25,15 +28,18 @@ $ yarn
 Development
 ---
 To lift the dev server (default port 3000) with hot module reloading.
+
 ```bash
 $ yarn dev
 ```
+
 The application can be reached at http://localhost:3000
 
 Build
 ---
 
 To bundle the React application
+
 ```bash
 $ yarn dist
 ```
@@ -54,6 +60,7 @@ $ yarn test:lite
 
 Linting
 ---
+
 ```bash
 $ yarn lint
 ```
