@@ -1,6 +1,6 @@
 import React from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Table, Title, Stack, Group } from '@mantine/core';
+import { Title, Stack } from '@mantine/core';
 
 const QuestionsEdit: React.FC = (): JSX.Element => {
     console.log('re-render');
@@ -14,9 +14,9 @@ const QuestionsEdit: React.FC = (): JSX.Element => {
         },
     });
 
-    if (isLoading) return 'Loading...';
+    if (isLoading) return <>Loading...</>;
 
-    if (error) return 'An error has occurred: ' + error.message;
+    if (error) return <>An error has occurred:</>;
 
     return (
         <section>

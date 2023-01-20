@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { AppShell, Navbar, Footer, Aside, Text, MediaQuery, useMantineTheme, r } from '@mantine/core';
+import React from 'react';
+import { AppShell, Footer, useMantineTheme } from '@mantine/core';
 import HeaderWrapper from './Header';
 
 const Layout = ({ children }: LayoutProps): JSX.Element => {

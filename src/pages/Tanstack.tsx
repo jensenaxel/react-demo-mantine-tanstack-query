@@ -12,18 +12,16 @@ const Tanstack: React.FC = (): JSX.Element => {
         queryKey: ['tanstack-data'],
         queryFn: () => {
             console.log('tanstack queryFn called');
-            return fetch(
-                'https://api.github.com/repos/tannerlinsley/react-query'
-            ).then((res) => {
+            return fetch('https://api.github.com/repos/tannerlinsley/react-query').then((res) => {
                 console.log('data returned', res);
                 return res.json();
             });
         },
     });
 
-    if (isLoading) return 'Loading...';
+    if (isLoading) return <>Loading...</>;
 
-    if (error) return 'An error has occurred: ' + error.message;
+    if (error) return <>An error has occurred: + error.message</>;
 
     return (
         <section>
@@ -33,8 +31,7 @@ const Tanstack: React.FC = (): JSX.Element => {
             <p>Current Count: {count}</p>
             <h1>{data.name}</h1>
             <p>{data.description}</p>
-            <strong>👀 {data.subscribers_count}</strong>{' '}
-            <strong>✨ {data.stargazers_count}</strong>{' '}
+            <strong>👀 {data.subscribers_count}</strong> <strong>✨ {data.stargazers_count}</strong>
             <strong>🍴 {data.forks_count}</strong>
         </section>
     );

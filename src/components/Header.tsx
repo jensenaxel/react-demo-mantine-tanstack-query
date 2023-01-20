@@ -1,5 +1,5 @@
 import React from 'react';
-import { Anchor, Group, Flex, Header } from '@mantine/core';
+import { Anchor, Group, Header } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
 
