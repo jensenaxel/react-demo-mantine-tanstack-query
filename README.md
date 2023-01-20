@@ -4,7 +4,17 @@ React Boilerplate
 ![Build](https://github.com/chuntley/react-boilerplate/workflows/Build/badge.svg)
 
 Hosted at:
+---
 https://celadon-puppy-b8d5ca.netlify.app
+
+Description:
+--- 
+Project uses
+
+* react-boilerplate: https://github.com/chuntley/react-boilerplate
+* mantine ui: https://mantine.dev/
+* tanstack query to get data: https://tanstack.com/query/latest
+* apiary.io for data mocking:https://apiary.io/
 
 Installation
 ---
@@ -20,8 +30,8 @@ https://yarnpkg.com/lang/en/docs/install/
 Clone and install Yarn dependencies:
 
 ```bash
-$ git clone git@github.com:chuntley/react-boilerplate.git
-$ cd react-boilerplate
+$ git clone git@github.com:jensenaxel/react-demo-mantine-tanstack-query.git
+$ cd react-demo-mantine-tanstack-query
 $ yarn
 ```
 
