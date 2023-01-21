@@ -5,11 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 const Questions: React.FC = (): JSX.Element => {
     const navigate = useNavigate();
-    console.log('re-render');
     const { isLoading, error, data } = useQuery({
         queryKey: ['questions'],
         queryFn: () => {
-            console.log('queryFn called');
             return fetch('https://private-9e5c7-reactdemo2.apiary-mock.com/questions').then((res) => {
                 return res.json();
             });
@@ -34,6 +32,9 @@ const Questions: React.FC = (): JSX.Element => {
         <section>
             <Stack spacing={'lg'}>
                 <Title>Questions Page</Title>
+                <Title size={'sm'} color={'dimmed'}>
+                    Select a question to edit
+                </Title>
                 <Table striped highlightOnHover withBorder withColumnBorders>
                     <thead>
                         <tr>

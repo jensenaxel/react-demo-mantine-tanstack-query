@@ -18,8 +18,11 @@ const HeaderWrapper = (): JSX.Element => {
                     <Anchor component={NavLink} to='/tanstack'>
                         Tanstack
                     </Anchor>
+                    <Anchor component={NavLink} to='/table-demo'>
+                        React Table Demo
+                    </Anchor>
                     <Anchor component={NavLink} to='/questions'>
-                        Questions
+                        Questions (Basic Table)
                     </Anchor>
                 </Group>
                 <Group spacing={'md'} position={'right'}>

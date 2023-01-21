@@ -15,8 +15,9 @@ Project uses
 * mantine ui: https://mantine.dev/
 * tanstack query to get data: https://tanstack.com/query/latest
 * apiary.io for data mocking:https://apiary.io/
+* react-table - datagrid : https://codesandbox.io/s/react-table-datagrid-eojw8
+  Installation
 
-Installation
 ---
 
 Requires Node >=14.x
