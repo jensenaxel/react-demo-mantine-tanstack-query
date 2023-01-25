@@ -6,7 +6,11 @@ import { useQuery } from '@tanstack/react-query';
 /* eslint-disable */
 
 const TableDemo: React.FC = (): JSX.Element => {
-    const { isLoading, error, data } = useQuery({
+    const {
+        isLoading,
+        error,
+        data = [],
+    } = useQuery({
         queryKey: ['questions'],
         queryFn: () => {
             return fetch('https://private-9e5c7-reactdemo2.apiary-mock.com/questions').then((res) => {
