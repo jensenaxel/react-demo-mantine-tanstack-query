@@ -20,6 +20,9 @@ const Layout = ({ children }: LayoutProps): JSX.Element => {
                     <MediaQuery largerThan='sm' styles={{ display: 'none' }}>
                         <Navbar p='md' hidden={!opened} width={{ base: 0 }}>
                             <Stack>
+                                <Anchor component={NavLink} to='/climbers' truncate onClick={() => setOpened(false)}>
+                                    Climbers
+                                </Anchor>
                                 <Anchor component={NavLink} to='/' truncate onClick={() => setOpened(false)}>
                                     Home
                                 </Anchor>
