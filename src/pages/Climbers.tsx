@@ -67,7 +67,7 @@ const Climbers: React.FC = (): JSX.Element => {
         <section>
             <Header />
             <h1>Climbers Page</h1>
-            <LineChart width={400} height={200} data={data}>
+            <LineChart width={350} height={200} data={data}>
                 <XAxis dataKey='date_created' hide={true} />
                 <YAxis dataKey='count' />
                 <Tooltip content={<CustomTooltip />} />
