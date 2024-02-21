@@ -12,11 +12,11 @@ import QuestionsEdit from './pages/QuestionsEdit';
 
 export default (
     <Routes>
-        <Route path='/' element={<Home />} />
+        <Route path='/' element={<Climbers />} />
         <Route path='/count' element={<Count />} />
         <Route path='/tanstack' element={<Tanstack />} />
         <Route path='/table-demo' element={<TableDemo />} />
-        <Route path='/climbers' element={<Climbers />} />
+        <Route path='/home' element={<Home />} />
         <Route path='/questions' element={<Questions />} />
         <Route path='/questions/:id' element={<QuestionsEdit />} />
         <Route path='*' element={<NotFound />} />
