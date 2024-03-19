@@ -1,68 +1,53 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/Header';
-import { Line, LineChart, Tooltip, XAxis, YAxis } from 'recharts';
 import Moment from 'moment';
-import { ArgumentAxis, Chart, LineSeries, ValueAxis, ZoomAndPan, Tooltip as DifferentTooltip } from '@devexpress/dx-react-chart-material-ui';
-import Paper from '@mui/material/Paper';
-import { EventTracker } from '@devexpress/dx-react-chart';
+import { Box, Flex, Group, Stack, Text, Title } from '@mantine/core';
 
 const dateFormatter = (value) => {
     return Moment(value).format('MM/DD hh:00 A');
 };
 
-const CustomTooltipContent = ({ targetItem, text, data }) => {
-    // Extract argument and value from targetItem
-    const { series, point } = targetItem;
-    let argument, value;
+const CustomBar = ({ label, value, prevDate, maxCount }) => {
+    let scale = 1;
+    const showDate = prevDate?.split(',')[0] !== label.split(',')[0]; // Check if it's the same date as the previous one
+    const hours = label.split(',')[1];
 
-    if (point) {
-        const dataIndex = point;
-        argument = data[dataIndex] && data[dataIndex].date_created;
-        value = text;
-    }
-    // You can customize the tooltip content here
+    if (maxCount >= 50 && maxCount < 75) scale = 2;
+    if (maxCount >= 25 && maxCount < 50) scale = 3;
+    if (maxCount < 25) scale = 4;
+
+    const barWidth = value * scale;
+
     return (
-        <div style={{ padding: '10px', backgroundColor: 'white', border: '1px solid black' }}>
-            <div>{`Date: ${argument} `}</div>
-            <div>{`Count: ${value}`}</div>
-        </div>
+        <Flex w={400} m={0}>
+            <Flex w='60%' direction={'row'} justify={'space-evenly'}>
+                {showDate ? (
+                    <Text w={175} align={'right'}>
+                        {label}
+                    </Text>
+                ) : (
+                    <Text w={175} align={'right'}>
+                        {hours}
+                    </Text>
+                )}
+                <Text w={25}> {value}</Text>
+            </Flex>
+            <Flex w='40%' align={'center'}>
+                <Box w={`${barWidth}%`} h={18} bg='blue' color='blue'></Box>
+            </Flex>
+        </Flex>
     );
-};
-
-const CustomTooltip = ({ active, payload, label }) => {
-    if (active && payload && payload.length) {
-        return (
-            <div style={{ padding: '10px', color: 'black' }}>
-                <p>{`Date: ${label}`}</p>
-                <p>{`Count: ${payload[0].value}`}</p>
-            </div>
-        );
-    }
-
-    return null;
 };
 
 const Climbers: React.FC = (): JSX.Element => {
     Moment.locale('en');
-    const [viewport, setViewport] = useState(undefined);
-    const [targetItem, setTargetItem] = useState(undefined);
-
-    const changeTargetItem = (newTargetItem) => {
-        setTargetItem(newTargetItem);
-    };
-
-    const handleViewportChange = (newViewport) => {
-        setViewport(newViewport);
-    };
 
     const { isLoading, error, data } = useQuery({
         queryKey: ['climbers-data'],
         queryFn: () => {
-            console.log('tanstack queryFn called');
             return fetch('https://reauslgov7.execute-api.us-east-1.amazonaws.com/prod/get-all-climbers')
                 .then((res) => {
-                    console.log('data returned', res);
                     return res.json();
                 })
                 .then((json) => {
@@ -87,7 +72,10 @@ const Climbers: React.FC = (): JSX.Element => {
                         return true;
                     });
 
-                    return filteredData;
+                    // Find the maximum count
+                    const maxCount = filteredData.reduce((max, item) => (item.count > max ? item.count : max), 0);
+
+                    return { data: filteredData, maxCount };
                 });
         },
     });
@@ -96,37 +84,23 @@ const Climbers: React.FC = (): JSX.Element => {
 
     if (error) return <>An error has occurred: + error.message</>;
 
-    /*
-    <LineChart width={350} height={200} data={data}>
-                <XAxis dataKey='date_created' hide={true} />
-                <YAxis dataKey='count' />
-                <Tooltip content={<CustomTooltip />} />
-                <Line type='monotone' dataKey='count' stroke='#8884d8' />
-            </LineChart>
-     */
     return (
         <section>
             <Header />
-            <h1>Climbers Page</h1>
-            <Paper>
-                <Chart data={data}>
-                    <ArgumentAxis showLabels={false} />
-                    <ValueAxis />
-
-                    <LineSeries valueField='count' argumentField='date_created' />
-                    <EventTracker />
-                    <DifferentTooltip
-                        targetItem={targetItem}
-                        onTargetItemChange={changeTargetItem}
-                        contentComponent={(props) => <CustomTooltipContent {...props} data={data} />}
-                    />
-                    <ZoomAndPan viewport={viewport} onViewportChange={handleViewportChange} />
-                </Chart>
-            </Paper>
-
-            <div>
-                <pre>{JSON.stringify(data, null, 2)}</pre>
-            </div>
+            <Stack>
+                <Title>Climbers </Title>
+                <Stack spacing={0}>
+                    {data.data.map((item, index, array) => (
+                        <CustomBar
+                            key={index}
+                            label={item.date_created}
+                            value={item.count}
+                            prevDate={index > 0 ? array[index - 1].date_created : null} // Pass the previous date
+                            maxCount={data.maxCount}
+                        />
+                    ))}
+                </Stack>
+            </Stack>
         </section>
     );
 };
