@@ -2,10 +2,31 @@ import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/Header';
 import Moment from 'moment';
-import { Box, Flex, Group, Stack, Text, Title } from '@mantine/core';
+import { ArgumentAxis, Chart, BarSeries, ValueAxis, ZoomAndPan, Tooltip as DifferentTooltip } from '@devexpress/dx-react-chart-material-ui';
+import { EventTracker } from '@devexpress/dx-react-chart';
+import { Stack, Title, Container, Flex, Box, Text } from '@mantine/core';
 
 const dateFormatter = (value) => {
     return Moment(value).format('MM/DD hh:00 A');
+};
+
+const CustomTooltipContent = ({ targetItem, text, data }) => {
+    // Extract argument and value from targetItem
+    const { series, point } = targetItem;
+    let argument, value;
+
+    if (point) {
+        const dataIndex = point;
+        argument = data[dataIndex] && data[dataIndex].date_created;
+        value = text;
+    }
+    // You can customize the tooltip content here
+    return (
+        <Container>
+            <Text>{`Date: ${argument} `}</Text>
+            <Text>{`Count: ${value}`}</Text>
+        </Container>
+    );
 };
 
 const CustomBar = ({ label, value, prevDate, maxCount }) => {
@@ -42,6 +63,16 @@ const CustomBar = ({ label, value, prevDate, maxCount }) => {
 
 const Climbers: React.FC = (): JSX.Element => {
     Moment.locale('en');
+    const [viewport, setViewport] = useState(undefined);
+    const [targetItem, setTargetItem] = useState(undefined);
+
+    const changeTargetItem = (newTargetItem) => {
+        setTargetItem(newTargetItem);
+    };
+
+    const handleViewportChange = (newViewport) => {
+        setViewport(newViewport);
+    };
 
     const { isLoading, error, data } = useQuery({
         queryKey: ['climbers-data'],
@@ -89,6 +120,19 @@ const Climbers: React.FC = (): JSX.Element => {
             <Header />
             <Stack>
                 <Title>Climbers </Title>
+                <Chart data={data.data}>
+                    <ArgumentAxis showLabels={false} />
+                    <ValueAxis />
+
+                    <BarSeries valueField='count' argumentField='date_created' />
+                    <EventTracker />
+                    <DifferentTooltip
+                        targetItem={targetItem}
+                        onTargetItemChange={changeTargetItem}
+                        contentComponent={(props) => <CustomTooltipContent {...props} data={data.data} />}
+                    />
+                    <ZoomAndPan viewport={viewport} onViewportChange={handleViewportChange} />
+                </Chart>
                 <Stack spacing={0}>
                     {data.data.map((item, index, array) => (
                         <CustomBar
