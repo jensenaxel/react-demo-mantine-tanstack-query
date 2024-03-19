@@ -39,12 +39,18 @@
     "vitest": "0.25.2"
   },
   "dependencies": {
+    "@devexpress/dx-react-chart": "^4.0.8",
+    "@devexpress/dx-react-chart-material-ui": "^4.0.8",
+    "@devexpress/dx-react-core": "^4.0.8",
     "@emotion/react": "^11.10.5",
+    "@emotion/styled": "^11.11.0",
     "@mantine/core": "^5.10.0",
     "@mantine/dates": "^5.10.0",
     "@mantine/hooks": "^5.10.0",
     "@mantine/modals": "^5.10.0",
     "@mantine/notifications": "^5.10.0",
+    "@mui/material": "^5.15.13",
+    "@mui/styled-engine": "^5.15.11",
     "@tanstack/react-query": "^4.22.0",
     "@tanstack/react-query-devtools": "^4.22.0",
     "@testing-library/react": "^13.4.0",
@@ -57,6 +63,7 @@
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.3",
     "react-table": "7.8.0",
-    "recharts": "^2.12.0"
+    "recharts": "^2.12.0",
+    "sass": "^1.49.9"
   }
 }

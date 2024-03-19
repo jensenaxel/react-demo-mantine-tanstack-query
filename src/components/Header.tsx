@@ -2,6 +2,7 @@ import React from 'react';
 import { Anchor, Header, createStyles, Flex, Image, MediaQuery, Burger, Text, Container, Group } from '@mantine/core';
 import { NavLink } from 'react-router-dom';
 import { useAppContext } from '../hooks/useAppContext';
+import classes from '../styles/Examples.module.scss';
 
 const useStyles = createStyles((theme, _params, getRef) => ({
     link: {},
@@ -13,7 +14,6 @@ const useStyles = createStyles((theme, _params, getRef) => ({
 const HeaderWrapper = (): JSX.Element => {
     const { count, opened, setOpened } = useAppContext();
     const { classes } = useStyles();
-    console.log(`opened:${opened}`);
     return (
         <>
             <Header height={{ base: 60, md: 60 }} p='md'>
