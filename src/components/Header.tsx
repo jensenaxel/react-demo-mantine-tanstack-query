@@ -35,6 +35,12 @@ const HeaderWrapper = (): JSX.Element => {
                         <Anchor component={NavLink} to='/climbers' className={classes.link} truncate>
                             Climbers
                         </Anchor>
+                        <Anchor component={NavLink} to='/players' className={classes.link} truncate>
+                            Players
+                        </Anchor>
+                        <Anchor component={NavLink} to='/hockeytv' className={classes.link} truncate>
+                            HockeyTV
+                        </Anchor>
                         <Anchor component={NavLink} to='/table-demo' className={classes.link} truncate>
                             React Table Demo
                         </Anchor>

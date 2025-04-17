@@ -3,6 +3,10 @@ import react from '@vitejs/plugin-react';
 import path from 'path';
 
 export default defineConfig({
+    server: {
+        host: true, // equivalent to 0.0.0.0
+        port: 5173,
+    },
     plugins: [react()],
     optimizeDeps: {
         include: ['scichart'],
