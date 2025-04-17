@@ -38,6 +38,7 @@ const HockeyTV: React.FC = () => {
         },
     });
 
+    const isGamesToShow = data?.games.length;
     const currentUrl = data?.urls?.[currentIndex];
 
     const currentGame = useMemo(() => {
@@ -137,119 +138,150 @@ const HockeyTV: React.FC = () => {
                     mb='md'
                 />
 
-                <Title order={3} mb='xs'>
-                    {easyName ?? 'Unknown Game'}
-                </Title>
+                {isGamesToShow && (
+                    <Container>
+                        <Title order={3} mb='xs'>
+                            {easyName ?? 'Unknown Game'}
+                        </Title>
 
-                <Text size='sm' mb='sm'>
-                    Games are listed in order they were played.
-                </Text>
+                        <Text size='sm' mb='sm'>
+                            Games are listed in order they were played.
+                        </Text>
+                        <Group mb='md' grow>
+                            <Button onClick={handlePrev}>Previous</Button>
 
-                <Group mb='md'>
-                    <Button onClick={handlePrev}>Previous</Button>
-                    {!isBrightcove && <Button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</Button>}
-                    <Button onClick={handleNext}>Next</Button>
-                </Group>
+                            {isBrightcove ? (
+                                <div style={{ visibility: 'hidden' }}>
+                                    <Button disabled>Play</Button>
+                                </div>
+                            ) : (
+                                <Button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</Button>
+                            )}
 
-                <div>
-                    {isAudio && (
-                        <audio
-                            key={currentUrl} // ✅ force remount when URL changes
-                            ref={(el) => (playerRef.current = el)}
-                            controls
-                            autoPlay={isPlaying}
-                            onEnded={handleNext}
-                            style={{ width: '100%' }}
-                        >
-                            <source src={currentUrl} type='audio/mpeg' />
-                        </audio>
-                    )}
-
-                    {isVideo && !isBrightcove && (
-                        <video
-                            key={currentUrl}
-                            ref={(el) => (playerRef.current = el)}
-                            controls
-                            autoPlay={isPlaying}
-                            onEnded={handleNext}
-                            style={{ width: '100%' }}
-                        >
-                            <source src={currentUrl} type='video/mp4' />
-                        </video>
-                    )}
-
-                    {isBrightcove && <iframe src={`${currentUrl}&autoplay=1`} width='100%' height='360' allow='autoplay; encrypted-media' allowFullScreen />}
-                </div>
-
-                <Box mt='xl' ml='xl' mr='xl'>
-                    <ScrollArea
-                        type='always'
-                        style={{
-                            overflowX: isMobile ? 'hidden' : 'auto',
-                            overflowY: isMobile ? 'auto' : 'hidden',
-                            maxHeight: isMobile ? 600 : undefined,
-                        }}
-                    >
-                        <Group spacing='md' noWrap={!isMobile} direction={isMobile ? 'column' : 'row'} px='sm'>
-                            {data?.games.map((game) => {
-                                const awayTeamName = `${game?.awayTeam?.placeName?.default} ${game?.awayTeam?.commonName?.default}`;
-                                const homeTeamName = `${game?.homeTeam?.placeName?.default} ${game?.homeTeam?.commonName?.default}`;
-                                const easyName = `${awayTeamName} at ${homeTeamName}`;
-                                const currentDate = `${dayjs(game?.gameDate).format('MM-DD-YYYY')}`;
-                                const isCurrent =
-                                    data.urls[currentIndex] === game.tellmePreGameResultsMp3 ||
-                                    data.urls[currentIndex] === game.standAloneVideoLink ||
-                                    data.urls[currentIndex] === game.tellmePostGameResultsMp3;
-
-                                return (
-                                    <Card
-                                        key={game.id}
-                                        ref={(el) => (cardRefs.current[game.id] = el)}
-                                        shadow='sm'
-                                        radius='md'
-                                        padding='md'
-                                        withBorder
-                                        style={{
-                                            minWidth: isMobile ? '100%' : '200px',
-                                            border: isCurrent ? '2px solid #1c7ed6' : '1px solid #ccc',
-                                            transition: 'border-color 0.2s ease',
-                                        }}
-                                    >
-                                        <Group position='center' spacing='xs'>
-                                            <Image src={game.awayTeam.logo} width={40} />
-                                            <Text size='sm'>vs</Text>
-                                            <Image src={game.homeTeam.logo} width={40} />
-                                        </Group>
-
-                                        <Text mt='sm' align='center' size='md' color='dimmed'>
-                                            {easyName}
-                                        </Text>
-                                        <Text mt='sm' align='center' size='xl' color='dimmed'>
-                                            {currentDate}
-                                        </Text>
-
-                                        <Button
-                                            fullWidth
-                                            mt='md'
-                                            size='xs'
-                                            onClick={() => {
-                                                const newIndex = data.urls.findIndex(
-                                                    (url) => url === game.tellmePreGameResultsMp3 || url === game.standAloneVideoLink
-                                                );
-                                                if (newIndex !== -1) {
-                                                    setCurrentIndex(newIndex);
-                                                    setIsPlaying(true);
-                                                }
-                                            }}
-                                        >
-                                            Play This Game
-                                        </Button>
-                                    </Card>
-                                );
-                            })}
+                            <Button onClick={handleNext}>Next</Button>
                         </Group>
-                    </ScrollArea>
-                </Box>
+
+                        <div>
+                            {isAudio && (
+                                <audio
+                                    key={currentUrl} // ✅ force remount when URL changes
+                                    ref={(el) => (playerRef.current = el)}
+                                    controls
+                                    autoPlay={isPlaying}
+                                    onEnded={handleNext}
+                                    style={{ width: '100%' }}
+                                >
+                                    <source src={currentUrl} type='audio/mpeg' />
+                                </audio>
+                            )}
+
+                            {isVideo && !isBrightcove && (
+                                <video
+                                    key={currentUrl}
+                                    ref={(el) => (playerRef.current = el)}
+                                    controls
+                                    autoPlay={isPlaying}
+                                    onEnded={handleNext}
+                                    style={{ width: '100%' }}
+                                >
+                                    <source src={currentUrl} type='video/mp4' />
+                                </video>
+                            )}
+
+                            {isBrightcove && (
+                                <iframe src={`${currentUrl}&autoplay=1`} width='100%' height='360' allow='autoplay; encrypted-media' allowFullScreen />
+                            )}
+                        </div>
+
+                        <Group mb='md' grow>
+                            <Button onClick={handlePrev}>Previous</Button>
+
+                            {isBrightcove ? (
+                                <div style={{ visibility: 'hidden' }}>
+                                    <Button disabled>Play</Button>
+                                </div>
+                            ) : (
+                                <Button onClick={togglePlay}>{isPlaying ? 'Pause' : 'Play'}</Button>
+                            )}
+
+                            <Button onClick={handleNext}>Next</Button>
+                        </Group>
+                        <Box mt='xl' ml='xl' mr='xl'>
+                            <ScrollArea
+                                type='always'
+                                style={{
+                                    overflowX: isMobile ? 'hidden' : 'auto',
+                                    overflowY: isMobile ? 'auto' : 'hidden',
+                                    maxHeight: isMobile ? 600 : undefined,
+                                }}
+                            >
+                                <Group spacing='md' noWrap={!isMobile} direction={isMobile ? 'column' : 'row'} px='sm'>
+                                    {data?.games.map((game) => {
+                                        const awayTeamName = `${game?.awayTeam?.placeName?.default} ${game?.awayTeam?.commonName?.default}`;
+                                        const homeTeamName = `${game?.homeTeam?.placeName?.default} ${game?.homeTeam?.commonName?.default}`;
+                                        const easyName = `${awayTeamName} at ${homeTeamName}`;
+                                        const currentDate = `${dayjs(game?.gameDate).format('MM-DD-YYYY')}`;
+                                        const fullDayName = dayjs(game?.gameDate).format('dddd'); // "Monday", "Tuesday", etc.
+
+                                        const isCurrent =
+                                            data.urls[currentIndex] === game.tellmePreGameResultsMp3 ||
+                                            data.urls[currentIndex] === game.standAloneVideoLink ||
+                                            data.urls[currentIndex] === game.tellmePostGameResultsMp3;
+
+                                        return (
+                                            <Card
+                                                key={game.id}
+                                                ref={(el) => (cardRefs.current[game.id] = el)}
+                                                shadow='sm'
+                                                radius='md'
+                                                padding='md'
+                                                withBorder
+                                                style={{
+                                                    minWidth: isMobile ? '100%' : '200px',
+                                                    border: isCurrent ? '2px solid #1c7ed6' : '1px solid #ccc',
+                                                    transition: 'border-color 0.2s ease',
+                                                }}
+                                            >
+                                                <Group position='center' spacing='xs'>
+                                                    <Image src={game.awayTeam.logo} width={40} />
+                                                    <Text size='sm'>vs</Text>
+                                                    <Image src={game.homeTeam.logo} width={40} />
+                                                </Group>
+
+                                                <Text mt='sm' align='center' size='md' color='dimmed'>
+                                                    {easyName}
+                                                </Text>
+                                                <Text mt='sm' align='center' size='xl' color='bold'>
+                                                    {fullDayName}
+                                                </Text>
+                                                <Text mt='sm' align='center' size='xl' color='dimmed'>
+                                                    {currentDate}
+                                                </Text>
+
+                                                <Button
+                                                    fullWidth
+                                                    mt='md'
+                                                    size='xs'
+                                                    onClick={() => {
+                                                        const newIndex = data.urls.findIndex(
+                                                            (url) => url === game.tellmePreGameResultsMp3 || url === game.standAloneVideoLink
+                                                        );
+                                                        if (newIndex !== -1) {
+                                                            setCurrentIndex(newIndex);
+                                                            setIsPlaying(true);
+                                                        }
+                                                    }}
+                                                >
+                                                    Play This Game
+                                                </Button>
+                                            </Card>
+                                        );
+                                    })}
+                                </Group>
+                            </ScrollArea>
+                        </Box>
+                    </Container>
+                )}
             </Container>
         </section>
     );
