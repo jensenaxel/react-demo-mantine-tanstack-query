@@ -1,10 +1,12 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import Header from '../components/Header';
-import { ScrollArea, Title, Image, Card, Container, Box, Button, Group, Text } from '@mantine/core';
+import { ScrollArea, Title, Image, Card, Container, Box, Button, Group, Text, Checkbox, Stack } from '@mantine/core';
 import { useMediaQuery } from '@mantine/hooks';
 import { DatePicker } from '@mantine/dates';
 import dayjs from 'dayjs';
+
+const VIDEO_TIME_IN_SECONDS = 630;
 
 const HockeyTV: React.FC = () => {
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -13,6 +15,9 @@ const HockeyTV: React.FC = () => {
     const isMobile = useMediaQuery('(max-width: 768px)');
     const [selectedDate, setSelectedDate] = useState<Date | null>(new Date());
     const cardRefs = useRef<Record<number, HTMLDivElement | null>>({});
+    const [timerEnabled, setTimerEnabled] = useState(true);
+    const [timeLeft, setTimeLeft] = useState(VIDEO_TIME_IN_SECONDS); // 10 minutes in seconds
+    const timerRef = useRef<NodeJS.Timeout | null>(null);
 
     const formattedDate = useMemo(() => {
         return selectedDate ? dayjs(selectedDate).format('YYYY-MM-DD') : '2025-04-09';
@@ -85,6 +90,34 @@ const HockeyTV: React.FC = () => {
         }
     }, [currentIndex, data?.games, currentUrl]);
 
+    useEffect(() => {
+        if (timerEnabled && isBrightcove) {
+            if (timerRef.current) clearInterval(timerRef.current);
+
+            timerRef.current = setInterval(() => {
+                setTimeLeft((prev) => {
+                    if (prev <= 1) {
+                        clearInterval(timerRef.current!);
+                        // 👇 trigger your "auto-next" logic
+                        handleNext();
+                        return 0;
+                    }
+                    return prev - 1;
+                });
+            }, 1000);
+        }
+
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, [timerEnabled, isBrightcove]);
+
+    useEffect(() => {
+        return () => {
+            if (timerRef.current) clearInterval(timerRef.current);
+        };
+    }, []);
+
     // ✅ Media Session API
     useEffect(() => {
         if ('mediaSession' in navigator && currentGame && currentUrl) {
@@ -109,11 +142,13 @@ const HockeyTV: React.FC = () => {
     const handleNext = useCallback(() => {
         setCurrentIndex((prev) => (prev + 1) % data.urls.length);
         setIsPlaying(true);
+        setTimeLeft(VIDEO_TIME_IN_SECONDS);
     }, [data?.urls.length]);
 
     const handlePrev = useCallback(() => {
         setCurrentIndex((prev) => (prev - 1 < 0 ? data.urls.length - 1 : prev - 1));
         setIsPlaying(true);
+        setTimeLeft(VIDEO_TIME_IN_SECONDS);
     }, [data?.urls.length]);
 
     const togglePlay = () => setIsPlaying((prev) => !prev);
@@ -145,8 +180,33 @@ const HockeyTV: React.FC = () => {
                         </Title>
 
                         <Text size='sm' mb='sm'>
-                            Games are listed in order they were played.
+                            This site was made for people to catch up on a whole days hockey by creating an ai generated pregame, running the 10 min condensed
+                            game, then a created ai postgame.
                         </Text>
+                        {isBrightcove && (
+                            <Box w='100%' mb='10px'>
+                                <Stack align='flex-end' spacing='xs'>
+                                    <Checkbox
+                                        label='Auto-play next video in 10 min'
+                                        checked={timerEnabled}
+                                        onChange={(event) => {
+                                            const checked = event.currentTarget.checked;
+                                            setTimerEnabled(checked);
+
+                                            if (checked) {
+                                                setTimeLeft(VIDEO_TIME_IN_SECONDS); // Reset to 10 minutes
+                                            } else {
+                                                if (timerRef.current) clearInterval(timerRef.current); // Stop the timer
+                                            }
+                                        }}
+                                        mb='sm'
+                                    />
+                                    <Text m={0}>
+                                        Time left: {Math.floor(timeLeft / 60)}:{String(timeLeft % 60).padStart(2, '0')}
+                                    </Text>
+                                </Stack>
+                            </Box>
+                        )}
                         <Group mb='md' grow>
                             <Button onClick={handlePrev}>Previous</Button>
 
